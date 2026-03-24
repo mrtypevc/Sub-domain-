@@ -3,46 +3,34 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
-// Memory storage (temporary)
+// memory storage
 let sites = {};
 
-// Form page
+// Home page
 app.get("/", (req, res) => {
   res.send(`
-    <h1>Create Your Site</h1>
-    <form method="POST" action="/create">
-      <input name="name" placeholder="Enter site name" required /><br><br>
-      <input name="title" placeholder="Title" required /><br><br>
-      <textarea name="desc" placeholder="Description"></textarea><br><br>
-      <button type="submit">Create</button>
-    </form>
+    <h1>Auto Website Generator 🚀</h1>
+    <p>बस URL में कुछ भी लिखो</p>
+    <p>Example: /varun</p>
   `);
 });
 
-// Create site
-app.post("/create", (req, res) => {
-  const { name, title, desc } = req.body;
-
-  sites[name] = { title, desc };
-
-  res.send(`
-    <h2>Site Created ✅</h2>
-    <a href="/${name}">Go to your site</a>
-  `);
-});
-
-// Show site
+// Auto create + show
 app.get("/:name", (req, res) => {
   const name = req.params.name;
 
-  if (sites[name]) {
-    res.send(`
-      <h1>${sites[name].title}</h1>
-      <p>${sites[name].desc}</p>
-    `);
-  } else {
-    res.send("Site not found ❌");
+  // अगर site exist नहीं है → खुद बना दे
+  if (!sites[name]) {
+    sites[name] = {
+      title: name.toUpperCase() + "'s Site",
+      desc: "This site was created automatically 🔥"
+    };
   }
+
+  res.send(`
+    <h1>${sites[name].title}</h1>
+    <p>${sites[name].desc}</p>
+  `);
 });
 
 app.listen(3000);
